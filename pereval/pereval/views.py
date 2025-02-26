@@ -1,9 +1,8 @@
 from rest_framework import viewsets
 from .models import User, Coords, Pereval, Image
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from .serializers import UserSerializer, CoordsSerializer, PerevalSerializer, ImageSerializer
+from django.http import JsonResponse
+from rest_framework.generics import CreateAPIView
+from .serializers import UserSerializer, CoordsSerializer, PerevalSerializer, ImageSerializer, PerevalCreateSerializer
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -21,16 +20,19 @@ class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
 
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from .serializers import PerevalSerializer
+class PerevalCreateAPIView(CreateAPIView):
+    serializer_class = PerevalCreateSerializer
 
-class PerevalCreateView(APIView):
-    def post(self, request, format=None):
-        serializer = PerevalSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request, *args, **kwargs):
+
+        pereval_serializer = self.get_serializer(data=request.data)
+        try:
+            if pereval_serializer.is_valid(raise_exception=True):
+                pereval_serializer.save()
+                data = {'status': '200', 'message': 'null', 'id': f'{pereval_serializer.instance.id}'}
+                return JsonResponse(data=data)
+
+        except Exception as exc:
+            data = {'status': '400', 'message': f'Bad Request: {exc}', 'id': 'null'}
+            return JsonResponse(data=data)
 

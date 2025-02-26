@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import UserViewSet, CoordsViewSet, PerevalViewSet, ImageViewSet, PerevalCreateView
+from .views import UserViewSet, CoordsViewSet, PerevalViewSet, ImageViewSet, PerevalCreateAPIView
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -10,5 +10,5 @@ router.register(r'images', ImageViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('pereval/create/', PerevalCreateView.as_view(), name='pereval-create'),  # Маршрут для APIView
+    path('pereval/create/', PerevalCreateAPIView.as_view(), name='pereval-create'),  # Маршрут для APIView
 ]
