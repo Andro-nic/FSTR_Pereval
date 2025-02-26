@@ -8,17 +8,13 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['email', 'phone', 'last_name', 'first_name', 'middle_name']
 
-        class Meta:
-            model = User
-            fields = ['email', 'phone', 'fam', 'name', 'otc']
+    def to_internal_value(self, data):
+        data = data.copy()
+        data['last_name'] = data.pop('fam', '')
+        data['first_name'] = data.pop('name', '')
+        data['middle_name'] = data.pop('otc', '')
 
-        def to_internal_value(self, data):
-            data = data.copy()
-            data['last_name'] = data.pop('fam', '')
-            data['first_name'] = data.pop('name', '')
-            data['middle_name'] = data.pop('otc', '')
-            print("********")
-            return super().to_internal_value(data)
+        return super().to_internal_value(data)
 
 
 class CoordsSerializer(serializers.ModelSerializer):
@@ -30,7 +26,7 @@ class CoordsSerializer(serializers.ModelSerializer):
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
-        fields = ['data', 'title']
+        fields = ['data', 'title',]
 
 
 class PerevalSerializer(serializers.ModelSerializer):
@@ -44,16 +40,16 @@ class PerevalCreateSerializer(serializers.ModelSerializer):
     coords = CoordsSerializer()
     images = ImageSerializer(many=True)
 
-    model = Pereval
-    fields = ['beauty_title', 'title', 'other_titles', 'connect', 'user', 'coords', 'images', 'level_spring',
-              'level_summer', 'level_autumn', 'level_winter']
+    class Meta:
+        model = Pereval
+        fields = ['beauty_title', 'title', 'other_titles', 'connect', 'user', 'coords', 'images', 'level_spring',
+                  'level_summer', 'level_autumn', 'level_winter']
 
     def create(self, validated_data):
-        print("validated_data:", validated_data)
 
         user_data = validated_data.pop('user', None)  # Added None as default
         coords_data = validated_data.pop('coords', None)  # Added None as default
-        images_data = validated_data.pop('images', [])
+        images_data = validated_data.pop('images')
 
         if user_data is None or coords_data is None:
             raise ValueError("User and Coords data must be provided.")

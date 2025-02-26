@@ -3,11 +3,11 @@ from django.db import models
 
 
 class User(models.Model):
-    email = models.EmailField(verbose_name='Электронная почта')
-    phone = models.CharField(verbose_name='Номер телефона', max_length=11)
+    email = models.EmailField(verbose_name='Электронная почта', unique=True)
     last_name = models.CharField(verbose_name='Фамилия', max_length=256)
     first_name = models.CharField(verbose_name='Имя', max_length=256)
     middle_name = models.CharField(verbose_name='Отчество', max_length=256)
+    phone = models.CharField(verbose_name='Номер телефона', max_length=11)
 
     def __str__(self):
         return f'{self.pk} {self.last_name} {self.first_name} {self.middle_name}'
@@ -48,7 +48,7 @@ class Pereval(models.Model):
 
 class Image(models.Model):
     pereval = models.ForeignKey(Pereval, on_delete=models.CASCADE, related_name='images')
-    data = models.ImageField(upload_to='images/', verbose_name='Изображения', blank=True, null=True)
+    data = models.URLField()
     title = models.CharField(verbose_name='Примечание', max_length=256, blank=True)
     datetime = models.DateField(auto_now_add=True)
 

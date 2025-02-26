@@ -1,7 +1,9 @@
 from rest_framework import viewsets
 from .models import User, Coords, Pereval, Image
-from django.http import JsonResponse
+from rest_framework.response import Response
+from rest_framework import status
 from rest_framework.generics import CreateAPIView
+from django.db import DatabaseError
 from .serializers import UserSerializer, CoordsSerializer, PerevalSerializer, ImageSerializer, PerevalCreateSerializer
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -24,15 +26,35 @@ class PerevalCreateAPIView(CreateAPIView):
     serializer_class = PerevalCreateSerializer
 
     def post(self, request, *args, **kwargs):
-
         pereval_serializer = self.get_serializer(data=request.data)
         try:
             if pereval_serializer.is_valid(raise_exception=True):
-                pereval_serializer.save()
-                data = {'status': '200', 'message': 'null', 'id': f'{pereval_serializer.instance.id}'}
-                return JsonResponse(data=data)
+                pereval = pereval_serializer.save()
+                return Response({
+                    "status": status.HTTP_200_OK,
+                    'message': 'Перевал успешно создан!',
+                    "id": pereval.id
+                }, status=status.HTTP_200_OK)
 
-        except Exception as exc:
-            data = {'status': '400', 'message': f'Bad Request: {exc}', 'id': 'null'}
-            return JsonResponse(data=data)
+        except DatabaseError as db_err:
+            # Обработка ошибок базы данных
+            return Response({
+                "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
+                "message": str(db_err),
+                "id": None
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+        except Exception as e:
+            # Обработка других ошибок
+            return Response({
+                "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
+                "message": str(e),
+                "id": None
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            # Если данные не валидны, вернуть ошибку валидации
+        return Response({
+            "status": status.HTTP_400_BAD_REQUEST,
+            "message": pereval_serializer.errors,
+            "id": None
+        }, status=status.HTTP_400_BAD_REQUEST)
