@@ -1,4 +1,3 @@
-
 from django.db import models
 
 
@@ -9,17 +8,11 @@ class User(models.Model):
     middle_name = models.CharField(verbose_name='Отчество', max_length=256)
     phone = models.CharField(verbose_name='Номер телефона', max_length=11)
 
-    def __str__(self):
-        return f'{self.pk} {self.last_name} {self.first_name} {self.middle_name}'
-
 
 class Coords(models.Model):
     latitude = models.FloatField(verbose_name='Широта')
     longitude = models.FloatField(verbose_name='Долгота')
     height = models.IntegerField(verbose_name='Высота над уровнем моря')
-
-    def __str__(self):
-        return f'latitude:{self.latitude} longitude:{self.longitude} height:{self.height}'
 
 
 class Pereval(models.Model):
@@ -44,13 +37,10 @@ class Pereval(models.Model):
     level_winter = models.CharField(verbose_name='Уровень сложности зимой', max_length=5, blank=True)
 
 
-
-
 class Image(models.Model):
     pereval = models.ForeignKey(Pereval, on_delete=models.CASCADE, related_name='images')
     data = models.URLField()
     title = models.CharField(verbose_name='Примечание', max_length=256, blank=True)
     datetime = models.DateField(auto_now_add=True)
 
-    def __str__(self):
-        return f'{self.title} - {self.pereval}'
+
