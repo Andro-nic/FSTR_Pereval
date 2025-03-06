@@ -1,75 +1,39 @@
-from rest_framework import viewsets
-from .models import User, Coords, Pereval, Image
+from .models import Pereval
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView, ListAPIView
 from django.db import DatabaseError
-from .serializers import (UserSerializer, CoordsSerializer, PerevalSerializer, ImageSerializer,
-                          PerevalUpdateSerializer, PerevalCreateSerializer)
-from rest_framework.views import APIView
+from .serializers import PerevalSerializer, PerevalUpdateSerializer, PerevalCreateSerializer
 
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-
-class CoordsViewSet(viewsets.ModelViewSet):
-    queryset = Coords.objects.all()
-    serializer_class = CoordsSerializer
-
-
-class PerevalViewSet(viewsets.ModelViewSet):
-    queryset = Pereval.objects.all()
-    serializer_class = PerevalSerializer
-
-
-class ImageViewSet(viewsets.ModelViewSet):
-    queryset = Image.objects.all()
-    serializer_class = ImageSerializer
-
-
-# GET api/pereval/submitData/<id> - извлекает конкретную запись по её id и включает всю связанную информацию,
+# GET api/pereval/<int:pk> - извлекает конкретную запись по её id и включает всю связанную информацию,
 # включая статус модерации.
 class PerevalDetailAPIView(RetrieveAPIView):
     queryset = Pereval.objects.all()
     serializer_class = PerevalSerializer
 
 
-# GET api/submitData/?useremail=<email> -
-# извлекает все записи, отправленные пользователем с указанным адресом электронной почты.
-class PerevalListByEmailAPIView(APIView):
+# GET api/pereval/?user__email=<emailList> - фильтрует по email
+class PerevalAPIView(ListAPIView):
+    queryset = Pereval.objects.all()
+    serializer_class = PerevalSerializer
+    filterset_fields = ('user__email',)
 
-    @staticmethod
-    def get_queryset(email):
-        return Pereval.objects.filter(user__email=email)
-
-    def get(self, request):
-        email = request.query_params.get('user__email')
-        if not email:
-            return Response({
-                "message": "Параметр email является обязательным."
-            }, status=status.HTTP_400_BAD_REQUEST)
-
-        perevals = self.get_queryset(email)
-        serializer = PerevalSerializer(perevals, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 # POST api/pereval/create - добавляет перевел
 class PerevalCreateAPIView(CreateAPIView):
     serializer_class = PerevalCreateSerializer
-
     def post(self, request, *args, **kwargs):
         pereval_serializer = self.get_serializer(data=request.data)
         try:
             if pereval_serializer.is_valid(raise_exception=True):
                 pereval = pereval_serializer.save()
                 return Response({
-                    "status": status.HTTP_200_OK,
+                    "status": status.HTTP_201_CREATED,#200_OK,
                     'message': 'Перевал успешно создан!',
                     "id": pereval.id
-                }, status=status.HTTP_200_OK)
+                }, status=status.HTTP_201_CREATED)#200_OK)
 
         except DatabaseError as db_err:
             # Обработка ошибок базы данных
