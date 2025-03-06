@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'pereval',
+    'add_pereval',
     'rest_framework',
     'django_filters',
     'drf_yasg',

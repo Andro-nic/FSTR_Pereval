@@ -46,8 +46,8 @@ class Migration(migrations.Migration):
                 ('level_summer', models.CharField(blank=True, max_length=5, verbose_name='Уровень сложности летом')),
                 ('level_autumn', models.CharField(blank=True, max_length=5, verbose_name='Уровень сложности осенью')),
                 ('level_winter', models.CharField(blank=True, max_length=5, verbose_name='Уровень сложности зимой')),
-                ('coords', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='pereval.coords')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='pereval.user')),
+                ('coords', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='add_pereval.coords')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='add_pereval.user')),
             ],
         ),
         migrations.CreateModel(
@@ -57,7 +57,7 @@ class Migration(migrations.Migration):
                 ('data', models.ImageField(blank=True, null=True, upload_to='images/', verbose_name='Изображения')),
                 ('title', models.CharField(blank=True, max_length=256, verbose_name='Примечание')),
                 ('datetime', models.DateField(auto_now_add=True)),
-                ('pereval', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='images', to='pereval.pereval')),
+                ('add_pereval', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='images', to='add_pereval.add_pereval')),
             ],
         ),
     ]

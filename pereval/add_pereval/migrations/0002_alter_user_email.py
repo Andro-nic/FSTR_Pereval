@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('pereval', '0001_initial'),
+        ('add_pereval', '0001_initial'),
     ]
 
     operations = [

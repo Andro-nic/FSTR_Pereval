@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('pereval', '0002_alter_user_email'),
+        ('add_pereval', '0002_alter_user_email'),
     ]
 
     operations = [
