@@ -6,14 +6,14 @@ from django.db import DatabaseError
 from .serializers import PerevalSerializer, PerevalUpdateSerializer, PerevalCreateSerializer
 
 
-# GET api/add_pereval/<int:pk> - извлекает конкретную запись по её id и включает всю связанную информацию,
+# GET api/pereval/<int:pk> - извлекает конкретную запись по её id и включает всю связанную информацию,
 # включая статус модерации.
 class PerevalDetailAPIView(RetrieveAPIView):
     queryset = Pereval.objects.all()
     serializer_class = PerevalSerializer
 
 
-# GET api/add_pereval/?user__email=<emailList> - фильтрует по email
+# GET api/pereval/?user__email=<emailList> - фильтрует по email
 class PerevalAPIView(ListAPIView):
     queryset = Pereval.objects.all()
     serializer_class = PerevalSerializer
@@ -21,7 +21,7 @@ class PerevalAPIView(ListAPIView):
 
 
 
-# POST api/add_pereval/create - добавляет перевел
+# POST api/pereval/create - добавляет перевел
 class PerevalCreateAPIView(CreateAPIView):
     serializer_class = PerevalCreateSerializer
     def post(self, request, *args, **kwargs):
@@ -30,10 +30,10 @@ class PerevalCreateAPIView(CreateAPIView):
             if pereval_serializer.is_valid(raise_exception=True):
                 pereval = pereval_serializer.save()
                 return Response({
-                    "status": status.HTTP_201_CREATED,#200_OK,
+                    "status": status.HTTP_200_OK,
                     'message': 'Перевал успешно создан!',
                     "id": pereval.id
-                }, status=status.HTTP_201_CREATED)#200_OK)
+                }, status=status.HTTP_200_OK)
 
         except DatabaseError as db_err:
             # Обработка ошибок базы данных
@@ -59,7 +59,7 @@ class PerevalCreateAPIView(CreateAPIView):
         }, status=status.HTTP_400_BAD_REQUEST)
 
 
-# PATCH api/add_pereval/<int:pk>/update - обновляет перевал
+# PATCH api/pereval/<int:pk>/update - обновляет перевал
 class PerevalUpdateAPIView(RetrieveUpdateAPIView):
     serializer_class = PerevalUpdateSerializer
 

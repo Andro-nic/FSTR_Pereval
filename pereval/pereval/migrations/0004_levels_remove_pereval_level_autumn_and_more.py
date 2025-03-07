@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('add_pereval', '0003_alter_image_data'),
+        ('pereval', '0003_alter_image_data'),
     ]
 
     operations = [
@@ -22,25 +22,25 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.RemoveField(
-            model_name='add_pereval',
+            model_name='pereval',
             name='level_autumn',
         ),
         migrations.RemoveField(
-            model_name='add_pereval',
+            model_name='pereval',
             name='level_spring',
         ),
         migrations.RemoveField(
-            model_name='add_pereval',
+            model_name='pereval',
             name='level_summer',
         ),
         migrations.RemoveField(
-            model_name='add_pereval',
+            model_name='pereval',
             name='level_winter',
         ),
         migrations.AddField(
-            model_name='add_pereval',
+            model_name='pereval',
             name='levels',
-            field=models.OneToOneField(default=None, on_delete=django.db.models.deletion.CASCADE, to='add_pereval.levels'),
+            field=models.OneToOneField(default=None, on_delete=django.db.models.deletion.CASCADE, to='pereval.levels'),
             preserve_default=False,
         ),
     ]

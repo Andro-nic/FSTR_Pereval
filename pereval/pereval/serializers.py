@@ -23,14 +23,12 @@ class UserSerializer(serializers.ModelSerializer):
 class CoordsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coords
-        fields = '__all__'
-        #fields = ['level_spring', 'level_summer', 'level_autumn', 'level_winter']
+        fields = ['latitude', 'longitude', 'height']
 
 class LevelsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Levels
-        fields = '__all__'
-        #fields = ['latitude', 'longitude', 'height']
+        fields = ['level_spring', 'level_summer', 'level_autumn', 'level_winter']
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -47,8 +45,8 @@ class PerevalSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Pereval
-        fields = '__all__'
-
+        #fields = '__all__'
+        fields  = ['beauty_title', 'title', 'other_titles', 'connect','user', 'coords', 'levels', 'images']
 
 class PerevalCreateSerializer(serializers.ModelSerializer):
     user = UserSerializer()
@@ -66,20 +64,26 @@ class PerevalCreateSerializer(serializers.ModelSerializer):
         coords_data = validated_data.pop('coords', None)
         levels_data = validated_data.pop('levels', None)
         images_data = validated_data.pop('images')
+
         # Проверяем обязательные данные
         if user_data is None or coords_data is None:
             raise ValueError("User and Coords data must be provided.")
+
         # Проверяем существование пользователя по email
         user_email = user_data.get('email')
         user = User.objects.filter(email=user_email).first()
         if not user:
+
             # Если пользователь не существует, создаем нового
             user = User.objects.create(**user_data)
+
         # Создаем объекты Coords и Levels
         coords = Coords.objects.create(**coords_data)
         levels = Levels.objects.create(**levels_data)
+
         # Создаем объект Pereval
         pereval = Pereval.objects.create(user=user, coords=coords, levels=levels, **validated_data)
+
         # Создаем связанные изображения
         for image in images_data:
             data = image.pop('data')

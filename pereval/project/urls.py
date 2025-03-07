@@ -6,7 +6,7 @@ from .yasg import urlpatterns as doc_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('add_pereval.urls')),
+    path('api/', include('pereval.urls')),
 ]
 
 urlpatterns += doc_urls
