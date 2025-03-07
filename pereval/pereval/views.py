@@ -30,10 +30,10 @@ class PerevalCreateAPIView(CreateAPIView):
             if pereval_serializer.is_valid(raise_exception=True):
                 pereval = pereval_serializer.save()
                 return Response({
-                    "status": status.HTTP_201_CREATED,#200_OK,
+                    "status": status.HTTP_200_OK,
                     'message': 'Перевал успешно создан!',
                     "id": pereval.id
-                }, status=status.HTTP_201_CREATED)#200_OK)
+                }, status=status.HTTP_200_OK)
 
         except DatabaseError as db_err:
             # Обработка ошибок базы данных
